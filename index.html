@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CPA Career Path Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #0a3d62;
+      text-align: center;
+    }
+    h2 {
+      color: #1e272e;
+    }
+    .question {
+      margin-bottom: 25px;
+      background-color: #ffffff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+    .option {
+      margin-left: 20px;
+      display: block;
+      padding: 3px 0;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      margin-top: 20px;
+      background-color: #0a3d62;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1e5fa0;
+    }
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      border: 2px solid #ccc;
+      background: #eaf6ff;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Where Could Accounting Take You?</h1>
+  <form id="quizForm">
+    <!-- Questions will be injected here by JavaScript -->
+    <button type="button" onclick="calculateResult()">Submit</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+      {
+        text: "How do you feel about rules and regulations?",
+        options: [
+          { text: "I like interpreting and applying them carefully.", value: "A" },
+          { text: "I like testing if they’re being followed.", value: "B" },
+          { text: "I want to investigate when they’re broken.", value: "C" },
+          { text: "I follow them if they support fairness and transparency.", value: "D" },
+          { text: "I like working within them but adapting for efficiency.", value: "E" }
+        ]
+      },
+      {
+        text: "Which kind of problem-solving appeals most to you?",
+        options: [
+          { text: "Researching answers in the tax code", value: "A" },
+          { text: "Assessing risk or reviewing processes", value: "B" },
+          { text: "Investigating anomalies or irregularities", value: "C" },
+          { text: "Solving budgeting challenges for a mission-driven group", value: "D" },
+          { text: "Making strategic decisions that affect business outcomes", value: "E" }
+        ]
+      },
+      {
+        text: "What kind of work product sounds most satisfying?",
+        options: [
+          { text: "Filing an airtight tax return", value: "A" },
+          { text: "Issuing an unqualified audit opinion", value: "B" },
+          { text: "Building a fraud case that holds people accountable", value: "C" },
+          { text: "Helping a nonprofit keep funding with clean books", value: "D" },
+          { text: "Preparing reports that guide executive decisions", value: "E" }
+        ]
+      },
+      {
+        text: "Which setting feels most like home?",
+        options: [
+          { text: "Small tax firm or specialized consulting group", value: "A" },
+          { text: "Large public firm with structured teams", value: "B" },
+          { text: "Internal audit or law enforcement agency", value: "C" },
+          { text: "Government office or NGO", value: "D" },
+          { text: "Corporate HQ or private company", value: "E" }
+        ]
+      },
+      {
+        text: "When working on a team, you often…",
+        options: [
+          { text: "Handle the complex research tasks", value: "A" },
+          { text: "Ask lots of questions to verify everything", value: "B" },
+          { text: "Spot the inconsistencies no one else sees", value: "C" },
+          { text: "Keep people mission-aligned and on budget", value: "D" },
+          { text: "Bring financial insight to operational decisions", value: "E" }
+        ]
+      },
+      {
+        text: "What motivates you professionally?",
+        options: [
+          { text: "Mastering technical challenges", value: "A" },
+          { text: "Protecting the public interest", value: "B" },
+          { text: "Pursuing truth and justice", value: "C" },
+          { text: "Serving a cause I believe in", value: "D" },
+          { text: "Growing a successful business", value: "E" }
+        ]
+      },
+      {
+        text: "You’d be proud to say your job title is:",
+        options: [
+          { text: "Tax Associate or Tax Manager", value: "A" },
+          { text: "Audit Senior or Audit Partner", value: "B" },
+          { text: "Forensic Analyst or Investigative Accountant", value: "C" },
+          { text: "Budget Analyst or Government Controller", value: "D" },
+          { text: "Finance Manager or Future CFO", value: "E" }
+        ]
+      }
+    ];
+
+    const form = document.getElementById('quizForm');
+
+    questions.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      const header = document.createElement('h2');
+      header.textContent = `${i + 1}. ${q.text}`;
+      div.appendChild(header);
+      q.options.forEach(opt => {
+        const label = document.createElement('label');
+        label.className = 'option';
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = `q${i + 1}`;
+        input.value = opt.value;
+        label.appendChild(input);
+        label.append(` ${opt.text}`);
+        div.appendChild(label);
+      });
+      form.insertBefore(div, form.lastElementChild);
+    });
+
+    function calculateResult() {
+      const counts = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+      const formData = new FormData(form);
+      for (let [q, ans] of formData.entries()) {
+        if (counts.hasOwnProperty(ans)) counts[ans]++;
+      }
+      const maxLetter = Object.entries(counts).reduce((a, b) => a[1] >= b[1] ? a : b)[0];
+      const paths = {
+        A: "🧾 Tax Associate → Tax Manager",
+        B: "📋 Audit Associate → Audit Manager",
+        C: "🔍 Forensic Analyst → Fraud Investigator",
+        D: "🏛️ Budget Analyst → Government Controller",
+        E: "🏢 Financial Analyst → CFO / Controller"
+      };
+      const descriptions = {
+        A: "You thrive on interpreting complex regulations and turning them into strategic advantages. Tax could be your calling!",
+        B: "You enjoy structure and accountability — and love ensuring things are done right. You’re audit-minded!",
+        C: "You’re naturally curious and analytical. Forensic accounting lets you dig deep and uncover the truth.",
+        D: "You’re purpose-driven, value transparency, and want to help organizations that serve the public. Nonprofit or government accounting may be ideal.",
+        E: "You want to influence big decisions. Corporate or industry accounting could lead you to an executive future."
+      };
+      document.getElementById('result').innerHTML = `
+        <h2>Your Suggested Accounting Career:</h2>
+        <p><strong>${paths[maxLetter]}</strong></p>
+        <p>${descriptions[maxLetter]}</p>
+        <p><em>Consider courses, internships, or mentorships that align with this path to explore it further!</em></p>
+      `;
+    }
+  </script>
+
+  <p style="text-align: center; font-size: 0.9em; color: #555; margin-top: 40px;">
+    Disclaimer: This quiz was created using AI and is based on content and themes from the AICPA 2024 Career Guide.
+  </p>
+</body>
+</html>
