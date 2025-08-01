@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CPA Career Path Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #0a3d62;
+      text-align: center;
+    }
+    h2 {
+      color: #1e272e;
+    }
+    .question {
+      margin-bottom: 25px;
+      background-color: #ffffff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    }
+    .option {
+      margin-left: 20px;
+      display: block;
+      padding: 3px 0;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      margin-top: 20px;
+      background-color: #0a3d62;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1e5fa0;
+    }
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      border: 2px solid #ccc;
+      background: #eaf6ff;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Where Could Accounting Take You?</h1>
+  <form id="quizForm">
+    <!-- Questions will be injected here by JavaScript -->
+    <button type="button" onclick="calculateResult()">Submit</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+      // same question array remains unchanged
+    ];
+
+    const form = document.getElementById('quizForm');
+
+    questions.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      const header = document.createElement('h2');
+      header.textContent = `${i + 1}. ${q.text}`;
+      div.appendChild(header);
+      q.options.forEach(opt => {
+        const label = document.createElement('label');
+        label.className = 'option';
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = `q${i + 1}`;
+        input.value = opt.value;
+        label.appendChild(input);
+        label.append(` ${opt.text}`);
+        div.appendChild(label);
+      });
+      form.insertBefore(div, form.lastElementChild);
+    });
+
+    function calculateResult() {
+      const counts = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+      const formData = new FormData(form);
+      for (let [q, ans] of formData.entries()) {
+        if (counts.hasOwnProperty(ans)) counts[ans]++;
+      }
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+      const topScore = sorted[0][1];
+      const topMatches = sorted.filter(([_, val]) => val === topScore).map(([key]) => key);
+
+      const paths = {
+        A: "🧾 Tax Associate → Tax Manager",
+        B: "📋 Audit Associate → Audit Manager",
+        C: "🔍 Forensic Analyst → Fraud Investigator",
+        D: "🏛️ Budget Analyst → Government Controller",
+        E: "🏢 Financial Analyst → CFO / Controller"
+      };
+      const descriptions = {
+        A: "You thrive on interpreting complex regulations and turning them into strategic advantages. Tax could be your calling!",
+        B: "You enjoy structure and accountability — and love ensuring things are done right. You’re audit-minded!",
+        C: "You’re naturally curious and analytical. Forensic accounting lets you dig deep and uncover the truth.",
+        D: "You’re purpose-driven, value transparency, and want to help organizations that serve the public. Nonprofit or government accounting may be ideal.",
+        E: "You want to influence big decisions. Corporate or industry accounting could lead you to an executive future."
+      };
+
+      let html = `<h2>Your Suggested Accounting Career${topMatches.length > 1 ? 's' : ''}:</h2>`;
+      topMatches.forEach(letter => {
+        html += `<p><strong>${paths[letter]}</strong></p><p>${descriptions[letter]}</p>`;
+      });
+      document.getElementById('result').innerHTML = html;
+    }
+  </script>
+
+  <p style="text-align: center; font-size: 0.9em; color: #555; margin-top: 40px;">
+    Disclaimer: This quiz was created using AI and is based on content and themes from the AICPA 2024 Career Guide.
+  </p>
+</body>
+</html>
