@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Ethical Alignment Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 980px;
+      margin: 32px auto;
+      padding: 16px;
+      background: #f7f7f7;
+      color: #111;
+    }
+    h1 { text-align:center; margin:0 0 8px; }
+    .sub { text-align:center; margin:0 0 18px; color:#444; }
+    .card {
+      background:#fff;
+      border-radius:12px;
+      box-shadow:0 2px 12px rgba(0,0,0,.06);
+      padding:16px;
+      margin:14px 0;
+    }
+    .q-title { font-weight:700; margin:0 0 10px; line-height:1.35; }
+    .opt {
+      display:block; padding:6px 8px; border-radius:10px; cursor:pointer; line-height:1.35;
+    }
+    .opt:hover { background:#f2f6ff; }
+    .actions {
+      display:flex; gap:10px; justify-content:center; margin:18px 0 8px; flex-wrap:wrap;
+    }
+    button {
+      padding:10px 16px; border:0; border-radius:12px; background:#0a3d62; color:#fff;
+      font-size:16px; cursor:pointer;
+    }
+    button:hover { background:#145b93; }
+    button.secondary { background:#666; }
+    button.secondary:hover { background:#555; }
+    .error {
+      background:#fff3f3; border:1px solid #ffd1d1; color:#8a1f1f;
+      border-radius:12px; padding:12px 14px; margin:12px 0; display:none;
+    }
+    #result {
+      display:none; background:#eaf6ff; border:1px solid #cde8ff; border-radius:12px;
+      padding:16px; margin-top:16px;
+    }
+    .badge {
+      display:inline-block; padding:4px 10px; border-radius:999px; background:#0a3d62;
+      color:#fff; font-weight:700; font-size:13px; margin-right:8px;
+    }
+    .profile {
+      margin:10px 0; padding:12px; background:#fff; border-radius:12px;
+      box-shadow:0 2px 10px rgba(0,0,0,.05);
+    }
+    .profile h3 { margin:0 0 6px; }
+    .counts {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-size:13px; color:#333; margin-top:10px;
+    }
+    .tiny { font-size:12px; color:#666; margin-top:22px; text-align:center; }
+  </style>
+</head>
+<body>
+  <h1>Ethical Alignment Quiz</h1>
+  <p class="sub">Choose the option that best matches your instinct. Results show your top 2 ethical frameworks.</p>
+
+  <div id="error" class="error"></div>
+  <form id="quizForm"></form>
+
+  <div class="actions">
+    <button type="button" id="submitBtn">Submit</button>
+    <button type="button" class="secondary" id="resetBtn">Reset</button>
+  </div>
+
+  <div id="result"></div>
+
+  <p class="tiny">
+    Disclaimer: This quiz was created using AI and instructor-provided content for educational purposes.
+  </p>
+
+<script>
+  const questions = [{"text": "You see someone shoplifting food. What’s your instinct?", "options": {"D": "Stealing is always wrong, no matter the circumstances.", "U": "If no one is harmed and the person is hungry, stealing might be morally acceptable.", "C": "I feel deep compassion—this person must be facing serious hardship.", "V": "I’d want to respond with integrity and moral courage, even in a difficult situation.", "M": "Stealing goes against divine commandments and must not be condoned.", "J": "I wouldn’t ignore the theft, but I’d seek a fair process that allows the person to explain their situation."}, "id": 1}, {"text": "You’re offered a promotion that requires relocating your family. What matters most?", "options": {"U": "Whether the decision benefits the greatest number of people.", "D": "Whether I’ve made prior commitments to my family.", "C": "How the move would impact my personal relationships.", "V": "Whether the promotion supports my growth and development as a person.", "M": "Whether accepting the promotion aligns with God’s will and fulfills my responsibility to care for my family.", "J": "Whether the decision is fair to my family’s well-being and to others affected by the move or promotion."}, "id": 2}, {"text": "A friend asks you to lie for them in court. What do you do?", "options": {"D": "Refuse—lying is wrong.", "U": "Consider whether the lie helps more than it harms.", "M": "Refuse. Moral truth is more important than loyalty.", "C": "Support them emotionally, even if it’s complicated.", "J": "I would tell the truth, because justice depends on fairness, honesty, and upholding the integrity of the legal process.", "V": "Ask what an honest person would do."}, "id": 3}, {"text": "You find a wallet with cash and ID. What do you do?", "options": {"D": "Return the wallet immediately—it’s the morally right thing to do.", "U": "Consider whether keeping it benefits you more than it harms the owner.", "J": "Turn it in to the proper authorities so the rightful owner can be identified and contacted.", "C": "Reflect on how you’d feel if you were the one who lost it.", "V": "Act as a trustworthy and principled person would.", "M": "Follow the guidance of your faith in deciding what to do."}, "id": 4}, {"text": "You’re asked to donate to a cause you don’t personally benefit from. What’s your response?", "options": {"D": "I believe I have a moral duty to help others in need.", "C": "I feel deep concern for those who are affected.", "J": "I assess whether the cause is fair, transparent, and whether supporting it advances justice for others.", "V": "Generosity is a reflection of strong moral character.", "M": "My faith calls me to help the poor, so I’d consider whether the cause aligns with those teachings.", "U": "I’ll contribute if it helps a large number of people."}, "id": 5}, {"text": "You witness a colleague being bullied. What do you do?", "options": {"M": "Speak up or seek help—faith teaches us to protect others and oppose injustice.", "D": "Speak up—standing against wrongdoing is the right thing to do.", "C": "Comfort the person and offer emotional support.", "U": "Intervene if doing so will reduce harm overall.", "V": "Respond with courage and compassion.", "J": "Take action to ensure fair and equitable treatment for everyone involved."}, "id": 6}, {"text": "You’re choosing between two jobs: one pays more, the other helps others. What matters most?", "options": {"U": "Choose the job that benefits the greatest number of people.", "J": "Choose the job that respects both my personal needs and its impact on others.", "M": "Choose the one I feel spiritually called to pursue.", "C": "Choose the role that allows me to care for others meaningfully.", "D": "Choose the one that best aligns with my responsibilities and obligations.", "V": "Choose the path that helps me cultivate moral character."}, "id": 7}, {"text": "You’re asked to break a rule to help someone. What do you consider?", "options": {"D": "Follow the rule—rules exist for a reason and should be respected.", "C": "Take into account the person’s emotional needs and circumstances.", "V": "Ask whether breaking the rule reflects good moral character.", "U": "Consider whether breaking the rule does more good than harm.", "M": "Consider whether the rule is morally sound and grounded in a just purpose.", "J": "Evaluate whether the rule is applied fairly to everyone, regardless of status."}, "id": 8}, {"text": "You’re deciding how to divide group work. What’s your approach?", "options": {"C": "Consider who may be struggling and offer support where needed.", "U": "Assign tasks to maximize overall efficiency and outcomes.", "D": "Divide tasks equally—fairness means treating everyone the same.", "V": "Assign tasks in ways that encourage personal responsibility and growth.", "J": "Ensure tasks are divided through a fair and transparent process that includes everyone’s input.", "M": "Strive to be fair, kind, and honest with everyone involved."}, "id": 9}, {"text": "You’re asked to forgive someone who hurt you. What guides your decision?", "options": {"U": "Forgiveness reduces suffering and promotes overall well-being.", "J": "I consider whether they’ve taken responsibility and whether I’ve had time to heal.", "V": "Forgiving others shows strength and integrity of character.", "D": "I believe I have a moral obligation to forgive.", "C": "I empathize with the pain they must be experiencing.", "M": "My faith teaches the importance of forgiveness."}, "id": 10}, {"text": "You’re choosing a charity to support. What’s your priority?", "options": {"C": "Choose the path that supports vulnerable or marginalized communities.", "V": "Choose the option that best reflects my core values.", "U": "Choose the option that helps the greatest number of people.", "J": "Choose the one that promotes justice and fairness for all.", "D": "Choose the one that aligns with my moral obligations.", "M": "Choose the path that expresses love and care for those in need or rejected by society."}, "id": 11}, {"text": "You’re asked to mentor a student. What motivates you?", "options": {"M": "My faith calls me to teach, guide, and love others with patience and kindness.", "D": "I feel a moral duty to guide and support others.", "C": "I care deeply about their personal and academic growth.", "U": "Helping them succeed contributes to the greater good of society.", "V": "Mentoring others helps me cultivate character and integrity.", "J": "Supporting others is part of a fair and equitable academic system."}, "id": 12}, {"text": "You’re deciding whether to report a friend’s misconduct. What matters most?", "options": {"M": "Be truthful, even when it’s difficult—honesty is a moral imperative.", "J": "Evaluate whether the system handles the report fairly for both parties.", "C": "Reflect on how reporting might affect our relationship.", "D": "Ask whether I have a moral duty to report the wrongdoing.", "V": "Consider whether reporting demonstrates integrity and moral courage.", "U": "Consider whether reporting the issue will prevent future harm."}, "id": 13}, {"text": "You’re asked to volunteer on a weekend. What’s your response?", "options": {"J": "I’ll consider whether the request is fair, respects my time, and values everyone’s contributions equally.", "D": "I’ve made a commitment, so I’ll follow through.", "C": "I care about the people involved and want to support them.", "U": "I’ll do it if it benefits a large number of people.", "V": "It’s an opportunity to practice generosity and kindness.", "M": "I’ll help if it serves others, but I’d need to accommodate my worship commitments."}, "id": 14}, {"text": "You’re deciding how to discipline a child. What’s your approach?", "options": {"D": "Follow consistent rules to ensure fairness and accountability.", "M": "Teach children with kindness, guiding them to understand right from wrong.", "V": "Model good behavior to teach by example.", "U": "Choose the approach that best supports their learning and development.", "C": "Consider their emotional needs and respond with empathy.", "J": "Use a fair and agreed-upon method that respects everyone involved."}, "id": 15}, {"text": "You’re asked to support a law you disagree with. What do you do?", "options": {"J": "Evaluate whether the policy has a disparate impact across different communities.", "U": "Support the policy if it benefits the majority.", "M": "If the policy conflicts with my religious beliefs, I can’t support it—faith must come first.", "D": "Oppose it if it violates core moral principles.", "C": "Consider how the policy affects vulnerable or marginalized groups.", "V": "Ask what a just and principled person would do."}, "id": 16}, {"text": "You’re deciding how to spend a bonus. What guides you?", "options": {"V": "Use it as an opportunity to practice generosity and kindness.", "J": "Balance personal needs with how the money could promote fairness and help others.", "U": "Use the money in ways that help the greatest number of people.", "M": "Use at least some of it to help others and not on things I really shouldn’t.", "D": "Use it responsibly, staying true to moral obligations.", "C": "Share it with loved ones to support and care for them."}, "id": 17}, {"text": "You’re asked to support a friend’s risky decision. What do you consider?", "options": {"U": "Consider whether the decision leads to positive outcomes.", "D": "Ask whether it violates any moral rules or duties.", "C": "Consider whether they need emotional support in this moment.", "V": "Ask whether the choice reflects courage and integrity.", "J": "Evaluate whether they’ve carefully considered all aspects of the situation.", "M": "Consider whether supporting them would be loving, honest, and wise—even if that means saying no."}, "id": 18}, {"text": "You’re asked to lead a team. What’s your leadership style?", "options": {"V": "Lead by example, demonstrating integrity and moral character.", "M": "Lead with humility, fairness, and genuine care for others.", "J": "Ensure fairness and seek consensus in decision-making.", "U": "Make decisions that maximize the team’s overall success.", "C": "Foster empathy, connection, and emotional support within the team.", "D": "Uphold clear rules and fulfill responsibilities."}, "id": 19}];
+  const profiles = {"C": {"name": "Care Ethics", "desc": "You prioritize empathy, compassion, and relationships. You focus on how decisions affect people—especially those who are vulnerable."}, "D": {"name": "Deontology (Duty-Based Ethics)", "desc": "You prioritize moral duties, rules, and obligations. You ask: “What is the right principle to follow?” even when outcomes are inconvenient."}, "J": {"name": "Justice Theory", "desc": "You prioritize fairness, equity, and due process. You focus on impartial rules and just treatment for all stakeholders."}, "M": {"name": "Divine Command Theory", "desc": "You ground ethical decisions in faith-based or moral authority. You ask whether an action aligns with divine commands or moral tradition."}, "U": {"name": "Utilitarianism", "desc": "You prioritize outcomes and the greatest overall good. You weigh costs/benefits and aim to maximize well-being and minimize harm."}, "V": {"name": "Virtue Ethics", "desc": "You prioritize moral character and integrity. You ask what a good person would do and how actions shape who you become."}};
+  const letters = ["C", "D", "J", "M", "U", "V"];
+
+  const form = document.getElementById("quizForm");
+  const errorBox = document.getElementById("error");
+  const resultBox = document.getElementById("result");
+
+  function renderQuiz() {
+    form.innerHTML = "";
+    questions.forEach((q, idx) => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const title = document.createElement("div");
+      title.className = "q-title";
+      title.textContent = `${idx + 1}. ${q.text}`;
+      card.appendChild(title);
+
+      letters.forEach(letter => {
+        const label = document.createElement("label");
+        label.className = "opt";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = `q${q.id}`;
+        input.value = letter;
+        input.style.marginRight = "8px";
+
+        const optText = (q.options && q.options[letter]) ? q.options[letter] : "[Missing option text]";
+        label.appendChild(input);
+        label.append(`(${letter}) ${optText}`);
+        card.appendChild(label);
+      });
+
+      form.appendChild(card);
+    });
+  }
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.style.display = "block";
+  }
+  function clearError() {
+    errorBox.textContent = "";
+    errorBox.style.display = "none";
+  }
+
+  function validateAllAnswered() {
+    for (const q of questions) {
+      const chosen = form.querySelector(`input[name="q${q.id}"]:checked`);
+      if (!chosen) return q.id;
+    }
+    return null;
+  }
+
+  function computeCounts() {
+    const counts = {};
+    letters.forEach(l => counts[l] = 0);
+
+    const data = new FormData(form);
+    for (const q of questions) {
+      const picked = data.get(`q${q.id}`);
+      if (picked && counts.hasOwnProperty(picked)) counts[picked] += 1;
+    }
+    return counts;
+  }
+
+  function topTwoLetters(counts) {
+    const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    const topScore = entries[0][1];
+
+    const tiedTop = entries.filter(([k,v])=>v===topScore).map(([k])=>k);
+    if (tiedTop.length >= 2) return tiedTop.slice(0,2);
+
+    const secondScoreObj = entries.find(([k,v])=>v<topScore);
+    const secondScore = secondScoreObj ? secondScoreObj[1] : topScore;
+    const tiedSecond = entries.filter(([k,v])=>v===secondScore).map(([k])=>k);
+
+    const combined = [entries[0][0], ...tiedSecond.filter(l=>l!==entries[0][0])];
+    return combined.slice(0,2);
+  }
+
+  function renderResult(counts) {
+    const top2 = topTwoLetters(counts);
+
+    const cards = top2.map(letter => {
+      const p = profiles[letter] || {name: letter, desc: ""};
+      return `
+        <div class="profile">
+          <h3><span class="badge">${letter}</span>${p.name}</h3>
+          <div>${p.desc}</div>
+        </div>
+      `;
+    }).join("");
+
+    const tally = letters.map(l => `${l}:${counts[l]}`).join("  ");
+
+    resultBox.style.display = "block";
+    resultBox.innerHTML = `
+      <div><strong>Your top ethical alignment${top2.length>1 ? "s" : ""}:</strong></div>
+      ${cards}
+      <div class="counts"><strong>Tally:</strong> ${tally}</div>
+      <div style="margin-top:10px;color:#444;font-size:13px;">
+        Note: This result shows your two highest-selected frameworks. If multiple frameworks tie, the quiz shows the first two tied frameworks.
+      </div>
+    `;
+    resultBox.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  document.getElementById("submitBtn").addEventListener("click", () => {
+    clearError();
+    const missing = validateAllAnswered();
+    if (missing !== null) {
+      showError(`Please answer Question ${missing} before submitting.`);
+      return;
+    }
+    renderResult(computeCounts());
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    form.reset();
+    clearError();
+    resultBox.style.display = "none";
+    resultBox.innerHTML = "";
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+
+  document.addEventListener("DOMContentLoaded", renderQuiz);
+  renderQuiz();
+</script>
+</body>
+</html>
