@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Ethics IQ Quiz</title>
+  <style>
+    body{font-family:Arial,sans-serif;max-width:950px;margin:32px auto;padding:16px;background:#f7f7f7;color:#111}
+    h1{text-align:center;margin:0 0 6px}
+    .sub{text-align:center;margin:0 0 18px;color:#444}
+    .card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:16px;margin:14px 0}
+    .q-title{font-weight:700;margin:0 0 10px;line-height:1.35}
+    .opt{display:block;padding:6px 8px;border-radius:10px;cursor:pointer;line-height:1.35}
+    .opt:hover{background:#f2f6ff}
+    .actions{display:flex;gap:10px;justify-content:center;margin:18px 0 8px;flex-wrap:wrap}
+    button{padding:10px 16px;border:0;border-radius:12px;background:#0a3d62;color:#fff;font-size:16px;cursor:pointer}
+    button:hover{background:#145b93}
+    button.secondary{background:#666}
+    button.secondary:hover{background:#555}
+    .error{background:#fff3f3;border:1px solid #ffd1d1;color:#8a1f1f;border-radius:12px;padding:12px 14px;margin:12px 0;display:none}
+    #result{display:none;background:#eaf6ff;border:1px solid #cde8ff;border-radius:12px;padding:16px;margin-top:16px}
+    .score{font-size:18px;margin:0 0 8px}
+    .band{font-weight:800;margin:0 0 8px}
+    .tiny{font-size:12px;color:#666;margin-top:22px;text-align:center}
+    hr{border:none;border-top:1px solid #cde8ff;margin:12px 0}
+  </style>
+</head>
+<body>
+  <h1>What is Your Ethics IQ?</h1>
+  <p class="sub">Choose the “best” answer for each question.</p>
+
+  <div id="error" class="error"></div>
+  <form id="quizForm"></form>
+
+  <div class="actions">
+    <button type="button" id="submitBtn">Submit</button>
+    <button type="button" class="secondary" id="resetBtn">Reset</button>
+  </div>
+
+  <div id="result"></div>
+
+  <p class="tiny">Disclaimer: This quiz was created using AI based on instructor-provided questions, answers, and scoring.</p>
+
+<script>
+const questions = [{"id": 1, "text": "Susan worked on a marketing campaign for a new product launch and shared a slogan idea with Frank, her supervisor, who was also interviewing for a promotion along with her. The client approved the new slogan and the sales revenue surpassed forecasted amounts when the product went to market. When Susan learned of Frank’s promotion to manager, the interviewing manager talked about how Frank’s slogan was a major factor in getting promoted. Susan privately talked with Frank about her disapproval of his actions and failure to give her credit. She asked him to correct the situation professionally. Assume Frank does not correct the problem, what should Susan do next?", "options": {"A": "Inform the interviewing manager of her concerns.", "B": "Notify Frank’s supervisor about the matter.", "C": "Quit."}, "scores": {"A": 2, "B": 3, "C": 1}}, {"id": 2, "text": "You are a student in Government 101 and are scheduled to take an essay final at 2:00 pm. While online, you notice a friend of yours in the 9:00 am section shared an Instagram photo of the essay questions. You are spending the time between 10:00 am and 2:00 pm in your study group. You need to ace this class to graduate with honors. What would you do?", "options": {"A": "Use the posting to prepare for the exam but don’t tell the group members about it.", "B": "Inform the group members and use the posted information to prepare for the exam.", "C": "Ignore the posting."}, "scores": {"A": 2, "B": 1, "C": 3}}, {"id": 3, "text": "You have discovered that your best friend is cheating on his wife. Your wife asks whether you know anything about it after seeing your friend with another woman at a restaurant. What would you do?", "options": {"A": "Confide in her that the cheating is going on.", "B": "Deny you know anything about it.", "C": "Tell her your friend hasn’t said anything to you about it."}, "scores": {"A": 2, "B": 1, "C": 3}}, {"id": 4, "text": "Your boss comes on to you at work. He constantly asks about your dating life and if you’re seeing anyone regularly. He regularly stares at you. His behavior makes you feel uncomfortable. But you are up for a promotion and he has the final say. What would you do?", "options": {"A": "Ignore it, at least until you get the promotion.", "B": "Tell him his behavior is unwanted and you feel uncomfortable.", "C": "Inform the Human Resources Department."}, "scores": {"A": 1, "B": 3, "C": 2}}, {"id": 5, "text": "Your best friend was diagnosed with cancer a year ago. You have seen him deteriorate and deal with excruciating pain since then. His doctor can’t prescribe marijuana, which might alleviate the pain, because it is illegal to do so in your state. You are thinking about crossing state lines and buying marijuana in a state that has medical- and recreational-use marijuana laws even though it is illegal to do so under the federal Controlled Substances Act. What would you do?", "options": {"A": "Cross state lines where buying and using marijuana is permitted and give it to your friend.", "B": "Don’t cross state lines because it is illegal under the federal Controlled Substances Act.", "C": "Tell your friend to move to a state that has medical marijuana laws."}, "scores": {"A": 1, "B": 3, "C": 2}}, {"id": 6, "text": "You are a student in an accounting ethics class and were told by three other students, who are working together in a group, that they used ChatGPT to help write a paper and develop a class presentation. You know this is a new tool that students are using to get ahead in courses. However, you are not sure that it would be acceptable to the instructor. What action, if any, would you take?", "options": {"A": "Tell the other students that what they are doing is cheating.", "B": "Speak to the instructor to clarify whether ChatGPT is an acceptable tool that students can choose to use.", "C": "Do nothing."}, "scores": {"A": 2, "B": 3, "C": 1}}, {"id": 7, "text": "You have just been fired from your job. On the way out, you contemplate downloading some proprietary information about a new R&D project of your employer. You worked on the project so figure you had a right to do so. What would you do?", "options": {"A": "Don’t download the information.", "B": "Download the information about the project.", "C": "Ask your employer for permission to download the information."}, "scores": {"A": 3, "B": 1, "C": 2}}, {"id": 8, "text": "You are one of five workers on a team that performs financial calculations for your company. In advance of a meeting between the team and your supervisor, you discover a member of the team, who is your boyfriend, made a mistake in a calculation. The mistake made it look like the company was making more money than it was. What would you do, assuming you are convinced the mistake was an honest one?", "options": {"A": "Ignore it: You don’t want to get your friend in trouble.", "B": "Speak to your friend: Give him the opportunity to correct the mistake.", "C": "Inform the supervisor since it’s your job to report what you have observed."}, "scores": {"A": 1, "B": 3, "C": 2}}, {"id": 9, "text": "You manage a group of six employees. One day one of those employees calls in sick. Later that day you notice she posted photos at a restaurant to Instagram. What would you do?", "options": {"A": "Speak to the employee the next day when she comes to work.", "B": "Let it go and say nothing.", "C": "Fire the employee."}, "scores": {"A": 3, "B": 2, "C": 1}}, {"id": 10, "text": "You are a manager at a fast-food restaurant and monitor your employee’s social media posts on company equipment. You just read a Facebook post by an employee who commented that the working conditions were oppressive. Other employees commented; some agreeing and others disagreeing. Assuming you work in an “at will” employment state (either the employer or the employee may terminate employment at any time). What would you do?", "options": {"A": "Fire the employee who posted the critical comments.", "B": "Ignore the comments.", "C": "Meet with the employee(s) to discuss the comments."}, "scores": {"A": 1, "B": 2, "C": 3}}];
+const scoreBands = [{"min": 10, "max": 16, "label": "10–16", "desc": "You consistently look for the easy way out, or you consider your needs and desires ahead of others. You need to consider what’s right and wrong and not use a relativistic/situational approach to ethics that lets you decide what to do based on what you want to do."}, {"min": 17, "max": 24, "label": "17–24", "desc": "Sometimes you take the high road, and sometimes you don’t. You are not consistently considering the consequences of your actions. Being ethical requires a long-term commitment to do the right thing, even if it means taking an action that you think harms you in the short run."}, {"min": 25, "max": 30, "label": "25–30", "desc": "Congratulations! You not only know what the right thing to do is, you consistently do it even when pressured by others to deviate from your ethical values."}];
+
+const form = document.getElementById("quizForm");
+const errorBox = document.getElementById("error");
+const resultBox = document.getElementById("result");
+
+function renderQuiz(){
+  form.innerHTML = "";
+  questions.forEach((q, idx) => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("div");
+    title.className = "q-title";
+    title.textContent = `${idx + 1}. ${q.text}`;
+    card.appendChild(title);
+
+    ["A","B","C"].forEach(letter => {
+      const label = document.createElement("label");
+      label.className = "opt";
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = `q${q.id}`;
+      input.value = letter;
+      input.style.marginRight = "8px";
+
+      label.appendChild(input);
+      label.append(`(${letter}) ${q.options[letter]}`);
+      card.appendChild(label);
+    });
+
+    form.appendChild(card);
+  });
+}
+
+function validateAllAnswered(){
+  for (const q of questions){
+    const chosen = form.querySelector(`input[name="q${q.id}"]:checked`);
+    if (!chosen) return q.id;
+  }
+  return null;
+}
+
+function computeScore(){
+  let total = 0;
+  const formData = new FormData(form);
+  for (const q of questions){
+    const picked = formData.get(`q${q.id}`);
+    if (!picked) continue;
+    total += q.scores[picked];
+  }
+  return total;
+}
+
+function getBand(total){
+  return scoreBands.find(b => total >= b.min && total <= b.max) || null;
+}
+
+function showError(msg){
+  errorBox.textContent = msg;
+  errorBox.style.display = "block";
+}
+function clearError(){
+  errorBox.textContent = "";
+  errorBox.style.display = "none";
+}
+
+function showResult(total, band){
+  resultBox.style.display = "block";
+  const bandHtml = band
+    ? `<div class="band">Total range: ${band.label}</div><div>${band.desc}</div>`
+    : `<div class="band">Score outside current bands</div><div>Please confirm your scoring thresholds.</div>`;
+
+  resultBox.innerHTML = `<div class="score"><strong>Your total score:</strong> ${total}</div>${bandHtml}`;
+  resultBox.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+document.getElementById("submitBtn").addEventListener("click", () => {
+  clearError();
+  const firstMissing = validateAllAnswered();
+  if (firstMissing !== null){
+    showError(`Please answer Question ${firstMissing} before submitting.`);
+    return;
+  }
+  const total = computeScore();
+  const band = getBand(total);
+  showResult(total, band);
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  form.reset();
+  clearError();
+  resultBox.style.display = "none";
+  resultBox.innerHTML = "";
+  window.scrollTo({top: 0, behavior: "smooth"});
+});
+
+document.addEventListener("DOMContentLoaded", renderQuiz);
+renderQuiz();
+</script>
+</body>
+</html>
